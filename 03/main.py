@@ -8,7 +8,25 @@ def read_file(file_path: str) -> list:
             memory += (line)
     return memory
 
-
+def split_memory_by_dodont(memory: str):
+    print("=========================")
+    do_action = []
+    dont_action = []
+    total_multipliers = []
+    total_running_total = 0
+    action_block = re.split(r'(do\(\)|don\'t\(\))',memory)
+    action_block.insert(0,"do()")
+    for block in range(len(action_block)):
+        if action_block[block] == 'do()':
+            print("Should say do()",action_block[block])
+            print("Should say some memory",action_block[block+1])
+            multipliers, running_total = split_memory_by_mul(action_block[block+1])
+            total_multipliers.append(multipliers)
+            total_running_total += running_total
+        else:
+            print("not a do")
+    print(total_running_total)
+    
 
 def split_memory_by_mul(memory: str):
     print("Memory:",memory)
@@ -29,10 +47,14 @@ def split_memory_by_mul(memory: str):
         except:
             print('Closing bracket not found')
             print(NameError)
+    print("Running total for block:",running_total)
     return multipliers, running_total
 
 
 
 memory = read_file('./input.txt')
-multipliers, running_total = split_memory_by_mul(memory)
-print(running_total)
+
+dodont_output = split_memory_by_dodont(memory)
+
+# multipliers, running_total = split_memory_by_mul(memory)
+# print(running_total)

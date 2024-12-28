@@ -8,6 +8,14 @@ class Letter:
         self.letter: str = letter
         Letter.instances.append(self)
 
+    def __eq__(self, other):
+        if not isinstance(other, Letter):
+            return NotImplemented
+        return (self.x == other.x) and (self.y == other.y) and (self.letter == other.letter)
+
+    def __hash__(self):
+        return hash((self.x, self.y, self.letter))
+
     def __repr__(self):
         return f"Letter {self.letter}, X: {self.x}, Y: {self.y}."
     
@@ -24,36 +32,33 @@ class Letter:
             if instance.letter == letter:
                     letters.append(instance)
         return letters
-            
-
-    def find_no(self):
-        return Letter.find_by_coords(self.x, self.y - 1)
-
-    def find_ne(self):
-        return Letter.find_by_coords(self.x + 1, self.y - 1)    
-        
-    def find_ea(self):
-        return Letter.find_by_coords(self.x + 1, self.y)
-    
-    def find_se(self):
-        return Letter.find_by_coords(self.x + 1, self.y + 1)
-    
-    def find_so(self):
-        return Letter.find_by_coords(self.x, self.y + 1)
-    
-    def find_sw(self):
-        return Letter.find_by_coords(self.x - 1, self.y + 1)
-    
-    def find_we(self):
-        return Letter.find_by_coords(self.x - 1, self.y)
-    
-    def find_nw(self):
-        return Letter.find_by_coords(self.x - 1, self.y - 1)
     
     @classmethod
-    def list_instances(cls):
+    def list_instances(cls,print_output=False):
         for instance in cls.instances:
-            print(instance)
+            if print_output:
+                print(instance)
+        return cls.instances
+            
+    def find_by_delta(self, dx, dy):
+       return Letter.find_by_coords(self.x + dx, self.y + dy)
+    
+    def find_no(self):
+        return Letter.find_by_coords(self.x, self.y - 1)
+    def find_ne(self):
+        return Letter.find_by_coords(self.x + 1, self.y - 1)    
+    def find_ea(self):
+        return Letter.find_by_coords(self.x + 1, self.y)
+    def find_se(self):
+        return Letter.find_by_coords(self.x + 1, self.y + 1)
+    def find_so(self):
+        return Letter.find_by_coords(self.x, self.y + 1)
+    def find_sw(self):
+        return Letter.find_by_coords(self.x - 1, self.y + 1)
+    def find_we(self):
+        return Letter.find_by_coords(self.x - 1, self.y)
+    def find_nw(self):
+        return Letter.find_by_coords(self.x - 1, self.y - 1)
 
 def read_file(file_path: str) -> list:
     word_search = []
@@ -81,6 +86,42 @@ def classify_word_search(word_search: list):
     # for classified_letter in classified_letters:
     #     print(classified_letter)
     return classified_letters
+
+def find_mas_xs_from_as(a_instances: list) -> tuple[int, list]:
+    ## Find all A's, then search neighbouring coordinates for M and S
+    mas_x_sets = []
+    total_mas_xs = 0
+    methods = ['find_no','find_ne','find_ea','find_se','find_so','find_sw', 'find_we','find_nw']
+    roots = [(-1,-1),(1,-1),(1,1),(-1,1),]
+    for a in a_instances:
+        for root in range(len(roots)):
+            root_coords = roots[root]
+            root_x,root_y = root_coords
+            root_m = a.find_by_delta(*root_coords)
+            if root_m and root_m.letter == 'M':
+                inverted_root_coords = -root_x,-root_y
+                opposite_root_s = a.find_by_delta(*inverted_root_coords)
+                if opposite_root_s and opposite_root_s.letter == 'S':
+                    reflected_root_coords = -root_x,root_y
+                    reflected_root_ms = a.find_by_delta(*reflected_root_coords)
+                    if reflected_root_ms and reflected_root_ms.letter == 'M':
+                        inverted_reflected_root_coords = root_x,-root_y
+                        inverted_opposite_root_s = a.find_by_delta(*inverted_reflected_root_coords)
+                        if inverted_opposite_root_s and inverted_opposite_root_s.letter == 'S':
+                            total_mas_xs += 1
+                            mas_x_sets.append((root_m,a,opposite_root_s,reflected_root_ms,a,inverted_opposite_root_s))
+                        else:
+                            break
+                    elif reflected_root_ms and reflected_root_ms.letter == 'S':
+                        inverted_reflected_root_coords = root_x,-root_y
+                        inverted_opposite_root_s = a.find_by_delta(*inverted_reflected_root_coords)
+                        if inverted_opposite_root_s and inverted_opposite_root_s.letter == 'M':
+                            total_mas_xs += 1
+                            mas_x_sets.append((root_m,a,opposite_root_s,reflected_root_ms,a,inverted_opposite_root_s))
+                        else:
+                            break
+    return total_mas_xs, mas_x_sets
+
 
 def find_xmas_instances_from_x(xs: list) -> int:
     ## Every instance of "XMAS" should start at an "X", regardless of orientation.
@@ -150,10 +191,20 @@ listed_file = read_file('./input.txt')
 # print(listed_file)
 classified_letters = classify_word_search(listed_file)
 
-first_letter = classified_letters[1]
-xs = Letter.find_by_letter("X")
-xmases = find_xmas_instances_from_x(xs)
-print("Total xmases:",xmases)
+# xs = Letter.find_by_letter("X")
+# xmases = find_xmas_instances_from_x(xs)
+# print("Total xmases:",xmases)
+
+a_instances = Letter.find_by_letter("A")
+total_mas_xs, mas_x_sets = find_mas_xs_from_as(a_instances)
+# print("MAS x sets:",mas_x_sets)
+print("Number of As:",len(a_instances))
+print("Total MAS xs:",total_mas_xs)
+print("Total unique MAS xs:",len(set(mas_x_sets)))
+
+## today i learned
+unique_sets = set(frozenset(mas_xs) for mas_xs in mas_x_sets)
+print(len(unique_sets))
 
 
         # no = x.find_no().letter if x.find_no() else None

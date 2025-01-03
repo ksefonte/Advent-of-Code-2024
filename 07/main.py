@@ -1,6 +1,12 @@
 from typing import List
 import itertools as itt
 
+
+def plog(*input):
+    # print(input)
+    return
+
+
 def read_file(file_path: str) -> list:
     file_out = []
     with open(file_path, 'r') as file:
@@ -17,20 +23,20 @@ def operate(
         operator: str
         ) -> None:
     if operator == '+':
-        print('Plussing')
-        print(i+j)
+        plog('Plussing')
+        plog(i+j)
         return i + j
     elif operator == '*':
-        print('multipling')
-        print(i*j)
+        plog('multipling')
+        plog(i*j)
         return i * j
     elif operator == "||":
-        print("Cocatenifying")
-        print(i+j)
+        plog("Cocatenifying")
+        plog(i+j)
         string = str(i)+str(j)
         return int(string)
     else:
-        print("Error")
+        plog("Error")
         return None
     
 ### product func for reference
@@ -54,31 +60,32 @@ def process_an_eq(an: int, eq: List[int], operators=['+','*']):
     for iteration in iterations:
         base = int(eq[0])
         for num in range(len(iteration)):
-            print(an, "B:",base)
-            print(f"{an} Base, eqnum, iter {base, int(eq[num+1]), iteration[0]}")
+            plog(an, "B:",base)
+            plog(f"{an} Base, eqnum, iter {base, int(eq[num+1]), iteration[0]}")
             base = operate(int(base),int(eq[num+1]),iteration[num])
-            print(an, "A:",base)
+            plog(an, "A:",base)
         if base == int(an.strip()):
             return base, (None,None)
+    print(f"{an} Processed")
     return 0, (an, eq)
     
 
 file_out = read_file('./input.txt')
-print(file_out)
+plog(file_out)
 
 list_of_bases = []
 for an,eq in file_out:
-    print(f"an, eq: {an,eq}")
+    plog(f"an, eq: {an,eq}")
     list_of_bases.append(process_an_eq(an,eq))
 
-print("Fails:")
+plog("Fails:")
 failed_calibrations = [(an,eq) for base, (an,eq) in list_of_bases if an != None and eq != None]
-print(failed_calibrations)
+plog(failed_calibrations)
 list_of_bases  = [base for base, (an,eq) in list_of_bases if base != None]
-print(list_of_bases)
+plog(list_of_bases)
 
 for an,eq in failed_calibrations:
-    print(f"an, eq: {an,eq}")
+    plog(f"an, eq: {an,eq}")
     base, (an,eq) = process_an_eq(an,eq,operators=['+','*','||'])
     list_of_bases.append(base)
 list_of_bases  = [base for base in list_of_bases if base != None]

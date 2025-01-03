@@ -24,6 +24,11 @@ def operate(
         print('multipling')
         print(i*j)
         return i * j
+    elif operator == "||":
+        print("Cocatenifying")
+        print(i+j)
+        string = str(i)+str(j)
+        return int(string)
     else:
         print("Error")
         return None
@@ -44,15 +49,15 @@ def product_nocomp(*args):
     
 def process_an_eq(an: int, eq: List[int]):
     output = None
-    operators = ['+','*']
+    operators = ['+','*','||']
     iterations = itt.product(operators, repeat=len(eq)-1)
     for iteration in iterations:
         base = int(eq[0])
         for num in range(len(iteration)):
-            print("B:",base)
-            print(f"Base, eqnum, iter {base, int(eq[num+1]), iteration[0]}")
+            print(an, "B:",base)
+            print(f"{an} Base, eqnum, iter {base, int(eq[num+1]), iteration[0]}")
             base = operate(int(base),int(eq[num+1]),iteration[num])
-            print("A:",base)
+            print(an, "A:",base)
         if base == int(an.strip()):
             return base
 

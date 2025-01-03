@@ -47,7 +47,7 @@ def product_nocomp(*args):
     for prod in result:
         yield tuple(prod)
     
-def process_an_eq(an: int, eq: List[int]):
+def process_an_eq(an: int, eq: List[int], operators=['+','*']):
     output = None
     operators = ['+','*','||']
     iterations = itt.product(operators, repeat=len(eq)-1)
@@ -59,7 +59,9 @@ def process_an_eq(an: int, eq: List[int]):
             base = operate(int(base),int(eq[num+1]),iteration[num])
             print(an, "A:",base)
         if base == int(an.strip()):
-            return base
+            return base, (None,None)
+    return 0, (an, eq)
+    
 
 file_out = read_file('./input.txt')
 print(file_out)
@@ -69,8 +71,16 @@ for an,eq in file_out:
     print(f"an, eq: {an,eq}")
     list_of_bases.append(process_an_eq(an,eq))
 
-print("Before filter")
+print("Fails:")
+failed_calibrations = [(an,eq) for base, (an,eq) in list_of_bases if an != None and eq != None]
+print(failed_calibrations)
+list_of_bases  = [base for base, (an,eq) in list_of_bases if base != None]
 print(list_of_bases)
+
+for an,eq in failed_calibrations:
+    print(f"an, eq: {an,eq}")
+    base, (an,eq) = process_an_eq(an,eq,operators=['+','*','||'])
+    list_of_bases.append(base)
 list_of_bases  = [base for base in list_of_bases if base != None]
 
 print("List of bases:")

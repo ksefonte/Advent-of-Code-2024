@@ -94,9 +94,7 @@ def process_unordered_updates(updates: list):
                     print("Valid order")
                     valid_updates +=1
                 elif update_ordered != True:
-                    update_to_reorder = update.pop(i)
-                    print("RE:",update_to_reorder)
-                    update.insert(0,update_to_reorder)
+                    update.insert(0,update.pop(i))
                     valid_updates = 0
         if enable_logs:
             print("V,V",valid_updates,len(update))

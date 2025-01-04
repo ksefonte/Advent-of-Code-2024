@@ -92,23 +92,20 @@ def process_sprawling_pairs(mapped_grid: list,character: str) -> list:
             )
         plog(f"iterations dx dy {dx, dy}")
         print(f"Antennae pair {character} {i,j} Gradient: {dx,dy} Number of iterations to edge: p{iterxypos} or n{iterxyneg} {py, px}")
-        for iterp in range(50):
-            a = (tuple(x + y for x,y in zip(i, (dx*(iterp+1),dy*(iterp+1)))))
+        for iter in range(px):
+            a = (tuple(x + y for x,y in zip(i, (dx*(iter+1),dy*(iter+1)))))
             if (0 <= a[0] < px and 0 <= a[1] < py):
                 print("ap",pair[0],a)
                 output.append(a)
-        for iterp in range(50):
-            c = (tuple(x - y for x,y in zip(i, (dx*(iterp+1),dy*(iterp+1)))))
+            c = (tuple(x - y for x,y in zip(i, (dx*(iter+1),dy*(iter+1)))))
             if (0 <= c[0] < px and 0 <= c[1] < py):
                 print("cp",pair[0],c)
                 output.append(c)
-        for itern in range(50):
-            b = (tuple(x + y for x,y in zip(i, (dx*(itern+1),dy*(itern+1)))))
+            b = (tuple(x + y for x,y in zip(i, (dx*(iter+1),dy*(iter+1)))))
             if (0 <= b[0] < px and 0 <= b[1] < py):
                 print("bn",pair[0],b)
                 output.append(b)
-        for itern in range(50):
-            d = (tuple(x - y for x,y in zip(i, (dx*(itern+1),dy*(itern+1)))))
+            d = (tuple(x - y for x,y in zip(i, (dx*(iter+1),dy*(iter+1)))))
             if (0 <= d[0] < px and 0 <= d[1] < py):
                 print("dn",pair[0],d)
                 output.append(d)

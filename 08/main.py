@@ -109,10 +109,6 @@ def process_sprawling_pairs(mapped_grid: list,character: str) -> list:
             if (0 <= d[0] < px and 0 <= d[1] < py):
                 print("dn",pair[0],d)
                 output.append(d)
-        # b = (tuple(x - y for x,y in zip(j, (dx,dy))))
-        # if (0 <= b[0] < px and 0 <= b[1] < py):
-        #     print("b",pair[0],b)
-        #     output.append(b)
     plog(character, 'output:', output)
     plog(character, 'output len',len(set(output)))
     return output
